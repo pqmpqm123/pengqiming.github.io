@@ -4,20 +4,20 @@
   <meta charset="utf-8">
   
   
-  <title>彭启明的技术小屋</title>
+  <title>Android 9.0系统Activity启动流程分析 | 彭启明的技术小屋</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="layout: |-  android 9.0系统启动流程源码分析“  hexo new androidtitle: Android 9.0系统Activity启动流程分析“date: 2019-04-23 15:51:40 tags:这几天终于有时间踏实的看一下Activity 启动流程了，梳理总结一下。先发一下整理的这个流程图，然后咱们按照这个路线进一步分析    首先来看看他的入口在哪La">
+  <meta name="description" content="这几天终于有时间踏实的看一下Activity 启动流程了，梳理总结一下。先发一下整理的这个流程图，然后咱们按照这个路线进一步分析    首先来看看他的入口在哪Launcher 实际上就是手机上的一个应用程序，点击手机上的一个APP icon，实际上就是LauncherActivity 调用startActivity()然后启动你需要的应用程序。所以咱们通过顺着这条路子查找下去。   Activit">
 <meta property="og:type" content="article">
-<meta property="og:title" content="彭启明的技术小屋">
-<meta property="og:url" content="http://yoursite.com/2019/04/23/9-0系统启动流程源码分析“/index.html">
+<meta property="og:title" content="Android 9.0系统Activity启动流程分析">
+<meta property="og:url" content="http://yoursite.com/2019/04/30/9-0系统启动流程源码分析“/index.html">
 <meta property="og:site_name" content="彭启明的技术小屋">
-<meta property="og:description" content="layout: |-  android 9.0系统启动流程源码分析“  hexo new androidtitle: Android 9.0系统Activity启动流程分析“date: 2019-04-23 15:51:40 tags:这几天终于有时间踏实的看一下Activity 启动流程了，梳理总结一下。先发一下整理的这个流程图，然后咱们按照这个路线进一步分析    首先来看看他的入口在哪La">
+<meta property="og:description" content="这几天终于有时间踏实的看一下Activity 启动流程了，梳理总结一下。先发一下整理的这个流程图，然后咱们按照这个路线进一步分析    首先来看看他的入口在哪Launcher 实际上就是手机上的一个应用程序，点击手机上的一个APP icon，实际上就是LauncherActivity 调用startActivity()然后启动你需要的应用程序。所以咱们通过顺着这条路子查找下去。   Activit">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="http://ww1.sinaimg.cn/large/007e4h7Uly1g2kh2kj51ej324l12ktej.jpg">
-<meta property="og:updated_time" content="2019-04-30T02:55:29.002Z">
+<meta property="og:updated_time" content="2019-04-30T09:20:01.166Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="彭启明的技术小屋">
-<meta name="twitter:description" content="layout: |-  android 9.0系统启动流程源码分析“  hexo new androidtitle: Android 9.0系统Activity启动流程分析“date: 2019-04-23 15:51:40 tags:这几天终于有时间踏实的看一下Activity 启动流程了，梳理总结一下。先发一下整理的这个流程图，然后咱们按照这个路线进一步分析    首先来看看他的入口在哪La">
+<meta name="twitter:title" content="Android 9.0系统Activity启动流程分析">
+<meta name="twitter:description" content="这几天终于有时间踏实的看一下Activity 启动流程了，梳理总结一下。先发一下整理的这个流程图，然后咱们按照这个路线进一步分析    首先来看看他的入口在哪Launcher 实际上就是手机上的一个应用程序，点击手机上的一个APP icon，实际上就是LauncherActivity 调用startActivity()然后启动你需要的应用程序。所以咱们通过顺着这条路子查找下去。   Activit">
 <meta name="twitter:image" content="http://ww1.sinaimg.cn/large/007e4h7Uly1g2kh2kj51ej324l12ktej.jpg">
   
     <link rel="alternate" href="/atom.xml" title="彭启明的技术小屋" type="application/atom+xml">
@@ -71,19 +71,27 @@
       <div class="outer">
         <section id="main"><article id="post-9-0系统启动流程源码分析“" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2019/04/23/9-0系统启动流程源码分析“/" class="article-date">
-  <time datetime="2019-04-23T07:51:40.579Z" itemprop="datePublished">2019-04-23</time>
+    <a href="/2019/04/30/9-0系统启动流程源码分析“/" class="article-date">
+  <time datetime="2019-04-30T02:46:30.000Z" itemprop="datePublished">2019-04-30</time>
 </a>
     
   </div>
   <div class="article-inner">
     
     
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Android 9.0系统Activity启动流程分析
+    </h1>
+  
+
+      </header>
+    
     <div class="article-entry" itemprop="articleBody">
       
-        <hr>
-<p>layout: |-<br>  android 9.0系统启动流程源码分析“<br>  hexo new android<br>title: Android 9.0系统Activity启动流程分析“<br>date: 2019-04-23 15:51:40</p>
-<h2 id="tags"><a href="#tags" class="headerlink" title="tags:"></a>tags:</h2><p>这几天终于有时间踏实的看一下Activity 启动流程了，梳理总结一下。先发一下整理的这个流程图，然后咱们按照这个路线进一步分析  </p>
+        <p>这几天终于有时间踏实的看一下Activity 启动流程了，梳理总结一下。先发一下整理的这个流程图，然后咱们按照这个路线进一步分析  </p>
 <p><img src="http://ww1.sinaimg.cn/large/007e4h7Uly1g2kh2kj51ej324l12ktej.jpg" alt></p>
 <p><strong>首先来看看他的入口在哪</strong><br>Launcher 实际上就是手机上的一个应用程序，点击手机上的一个APP icon，实际上就是LauncherActivity 调用startActivity()然后启动你需要的应用程序。所以咱们通过顺着这条路子查找下去。  </p>
 <p><strong>Activity</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public void startActivity(Intent intent, @Nullable Bundle options) &#123;</span><br><span class="line">        if (options != null) &#123;</span><br><span class="line">            startActivityForResult(intent, -1, options);</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            // Note we want to go through this call for compatibility with</span><br><span class="line">            // applications that may have overridden the method.</span><br><span class="line">            startActivityForResult(intent, -1);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
@@ -179,11 +187,11 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/04/23/9-0系统启动流程源码分析“/" data-id="cjv38ckpt00034blaw9lo250r" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/04/30/9-0系统启动流程源码分析“/" data-id="cjv3l06fw0003dslat7i35ie7" class="article-share-link">Share</a>
       
       
-        <a href="/2019/04/23/9-0系统启动流程源码分析“/#comments" class="article-comment-link">
-          <span class="post-comments-count valine-comment-count" data-xid="/2019/04/23/9-0系统启动流程源码分析“/" itemprop="commentCount"></span>
+        <a href="/2019/04/30/9-0系统启动流程源码分析“/#comments" class="article-comment-link">
+          <span class="post-comments-count valine-comment-count" data-xid="/2019/04/30/9-0系统启动流程源码分析“/" itemprop="commentCount"></span>
           Comments
         </a>
       
@@ -256,7 +264,7 @@
           </li>
         
           <li>
-            <a href="/2019/04/23/9-0系统启动流程源码分析“/">(no title)</a>
+            <a href="/2019/04/30/9-0系统启动流程源码分析“/">Android 9.0系统Activity启动流程分析</a>
           </li>
         
           <li>
